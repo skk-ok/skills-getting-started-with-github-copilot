@@ -26,8 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsHTML = `
             <div class="participants-section">
               <strong>Participants:</strong>
-              <ul class="participants-list">
-                ${details.participants.map(email => `<li>${email}</li>`).join("")}
+              <ul class="participants-list no-bullets" data-activity="${name}">
+                ${details.participants.map(email => `
+                  <li style="list-style-type:none;display:flex;align-items:center;gap:6px;">
+                    <span style="flex:1;">${email}</span>
+                    <button class="delete-participant-btn" title="Remove participant" data-activity="${name}" data-email="${email}" style="background:none;border:none;cursor:pointer;font-size:1.1em;">🗑️</button>
+                  </li>
+                `).join("")}
               </ul>
             </div>
           `;
@@ -48,7 +53,28 @@ document.addEventListener("DOMContentLoaded", () => {
           ${participantsHTML}
         `;
 
+
         activitiesList.appendChild(activityCard);
+
+        // Event Delegation für Lösch-Buttons
+        activityCard.addEventListener("click", async (e) => {
+          if (e.target.classList.contains("delete-participant-btn")) {
+            const activityName = e.target.getAttribute("data-activity");
+            const email = e.target.getAttribute("data-email");
+            if (confirm(`Remove ${email} from ${activityName}?`)) {
+              try {
+                const response = await fetch(`/activities/${encodeURIComponent(activityName)}/unregister?email=${encodeURIComponent(email)}`, { method: "POST" });
+                if (response.ok) {
+                  fetchActivities(); // Refresh list
+                } else {
+                  alert("Failed to remove participant.");
+                }
+              } catch (err) {
+                alert("Error removing participant.");
+              }
+            }
+          }
+        });
 
         // Add option to select dropdown
         const option = document.createElement("option");

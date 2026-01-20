@@ -90,11 +90,17 @@ section h3 {
 }
 
 .participants-list {
-  margin-left: 18px;
+  margin-left: 0;
   margin-bottom: 0;
   color: #333;
   font-size: 15px;
-  list-style-type: disc;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.no-bullets {
+  list-style-type: none !important;
+  padding-left: 0 !important;
 }
 
 .no-participants {
